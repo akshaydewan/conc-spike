@@ -4,6 +4,7 @@ use rayon::prelude::*;
 use rand::rngs::ThreadRng;
 use std::time::Instant;
 use std::ops::Range;
+use fxhash::FxHashMap;
 
 const AGENTS: Range<i32> = (0..20_000_000);
 
@@ -16,7 +17,7 @@ fn main() {
 fn single_threaded() {
     let start = Instant::now();
     let mut rng = thread_rng();
-    let mut grid = DashMap::with_capacity(AGENTS.end as usize);
+    let mut grid = FxHashMap::default();
     AGENTS.for_each(|i| update_location(&mut rng, &mut grid, i));
     println!("Single threaded completed in {:?} seconds", start.elapsed());
 }
@@ -29,7 +30,7 @@ fn multi_threaded() {
 }
 
 
-fn update_location(rng: &mut ThreadRng, grid: &mut DashMap<(i32, i32), i32>, i: i32) -> () {
+fn update_location(rng: &mut ThreadRng, grid: &mut FxHashMap<(i32, i32), i32>, i: i32) -> () {
     // if i % 1_000_000 == 0 {
     //     println!("count: {}", i);
     // }
